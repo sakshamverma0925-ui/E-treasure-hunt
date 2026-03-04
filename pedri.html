@@ -174,7 +174,7 @@ const DATA=[
     title:'The Battery Strike',
     desc:'Medium — White\'s queen and bishop form a deadly battery. The black king is pinned in the corner. Find the single mating move.',
     fen:'5r1k/6pp/8/8/8/3Q4/2B5/6K1 w - - 0 1',
-    solution:'Qh7#',
+    solution:'Qxh7#',
     hint:'The queen travels the diagonal to h7 — bishop and rook cover the rest.'
   },
   {
@@ -288,7 +288,7 @@ function buildCard(i){
         '<div>'+
           '<div class="section-label">Your Answer</div>'+
           '<div class="answer-row">'+
-            '<input type="text" class="answer-input" id="ans-'+i+'" placeholder="e.g. Qh7#"/>'+
+            '<input type="text" class="answer-input" id="ans-'+i+'" placeholder=""/>'+
             '<button class="check-btn" onclick="checkAnswer('+i+')">CHECK</button>'+
             '<button class="hint-btn" id="hintbtn-'+i+'" onclick="showHint('+i+')">HINT</button>'+
           '</div>'+

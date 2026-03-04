@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>E Treasure Hunt</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Bebas+Neue&family=DM+Sans:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0d0a0f;--panel:#16111a;--border:#2a1e30;--green:#39ff88;--green-dim:#1a4a2e;--green-glow:rgba(57,255,136,0.15);--text:#e8d5ff;--muted:#7a5a9a;--purple:#b066ff}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:2rem;background-image:radial-gradient(ellipse at 50% 0%,rgba(57,255,136,0.05) 0%,transparent 60%)}
+
+.container{max-width:640px;width:100%;text-align:center}
+
+.badge{font-family:'Share Tech Mono',monospace;font-size:0.72rem;letter-spacing:0.35em;color:var(--green);text-transform:uppercase;margin-bottom:1.5rem;opacity:0.8}
+
+h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(4rem,14vw,8rem);color:#fff;letter-spacing:0.04em;line-height:0.9;margin-bottom:0.3em}
+h1 span{color:var(--green);text-shadow:0 0 40px rgba(57,255,136,0.5)}
+
+.tagline{font-family:'Share Tech Mono',monospace;font-size:0.85rem;color:var(--muted);letter-spacing:0.2em;margin-bottom:3rem;line-height:1.7}
+
+.divider{width:60px;height:2px;background:var(--green);margin:0 auto 3rem;opacity:0.4;box-shadow:0 0 12px rgba(57,255,136,0.4)}
+
+.rules{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:2rem;margin-bottom:3rem;text-align:left}
+.rules-title{font-family:'Share Tech Mono',monospace;font-size:0.7rem;letter-spacing:0.25em;color:var(--green);text-transform:uppercase;margin-bottom:1.2rem}
+.rule{display:flex;gap:1rem;align-items:flex-start;margin-bottom:0.9rem;font-size:0.88rem;color:var(--text);line-height:1.5}
+.rule:last-child{margin-bottom:0}
+.rule-num{font-family:'Share Tech Mono',monospace;font-size:0.7rem;color:var(--green);background:rgba(57,255,136,0.08);border:1px solid rgba(57,255,136,0.2);border-radius:4px;padding:0.15rem 0.5rem;flex-shrink:0;margin-top:0.1rem}
+
+.begin-btn{display:inline-block;background:var(--green);color:#0d0a0f;border:none;border-radius:10px;font-family:'Bebas Neue',sans-serif;font-size:1.6rem;letter-spacing:0.25em;padding:1.1rem 3.5rem;cursor:pointer;text-decoration:none;transition:opacity 0.2s,transform 0.15s,box-shadow 0.2s;box-shadow:0 0 30px rgba(57,255,136,0.3)}
+.begin-btn:hover{opacity:0.9;transform:scale(1.03);box-shadow:0 0 50px rgba(57,255,136,0.5)}
+
+.footer{margin-top:2.5rem;font-family:'Share Tech Mono',monospace;font-size:0.65rem;color:var(--muted);letter-spacing:0.15em;opacity:0.5}
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="badge">// Event Begins Now //</div>
+
+  <h1>E <span>Treasure</span><br>Hunt</h1>
+
+  <p class="tagline">Four rounds. Four challenges.<br>Only one team claims victory.</p>
+
+  <div class="divider"></div>
+
+  <div class="rules">
+    <div class="rules-title">Rules</div>
+    <div class="rule"><span class="rule-num">01</span><span>Work through each round in order — you cannot skip ahead.</span></div>
+    <div class="rule"><span class="rule-num">02</span><span>Each round ends with a password. Enter it on the next round's page to unlock it.</span></div>
+    <div class="rule"><span class="rule-num">03</span><span>Hints are available but cost points. Use them wisely.</span></div>
+    <div class="rule"><span class="rule-num">04</span><span>The first team to complete all four rounds wins.</span></div>
+  </div>
+
+  <a class="begin-btn" href="round1.html">BEGIN ROUND 1</a>
+
+  <div class="footer">Good luck — you'll need it.</div>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>E Treasure Hunt — Round 2: Chess Puzzles</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Bebas+Neue&family=DM+Sans:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0d0a0f;--panel:#16111a;--border:#2a1e30;--purple:#b066ff;--purple-dim:#4a1f7a;--purple-glow:rgba(176,102,255,0.15);--text:#e8d5ff;--muted:#7a5a9a;--danger:#ff4f6a;--gold:#f0c040;--green:#39ff88}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;background-image:radial-gradient(ellipse at 30% 10%,rgba(176,102,255,0.06) 0%,transparent 60%)}
+#gate{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:2rem}
+.gate-box{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:3rem 2.5rem;max-width:420px;width:100%;text-align:center;box-shadow:0 0 60px rgba(176,102,255,0.1)}
+.gate-icon{font-size:3rem;margin-bottom:1rem}
+.gate-title{font-family:'Bebas Neue',sans-serif;font-size:2.2rem;color:var(--purple);letter-spacing:0.1em;margin-bottom:0.4rem;text-shadow:0 0 30px rgba(176,102,255,0.5)}
+.gate-sub{font-family:'Share Tech Mono',monospace;font-size:0.72rem;color:var(--muted);letter-spacing:0.2em;margin-bottom:2rem}
+.gate-input{width:100%;background:rgba(176,102,255,0.05);border:1px solid var(--purple-dim);border-radius:8px;color:var(--purple);font-family:'Share Tech Mono',monospace;font-size:1.4rem;letter-spacing:0.4em;text-align:center;padding:0.9rem 1rem;outline:none;text-transform:uppercase;margin-bottom:1rem;transition:border-color 0.2s}
+.gate-input:focus{border-color:var(--purple);box-shadow:0 0 16px var(--purple-glow)}
+.gate-btn{width:100%;background:var(--purple);color:var(--bg);border:none;border-radius:8px;font-family:'Bebas Neue',sans-serif;font-size:1.2rem;letter-spacing:0.2em;padding:0.9rem;cursor:pointer;transition:opacity 0.2s}
+.gate-btn:hover{opacity:0.85}
+.gate-error{font-family:'Share Tech Mono',monospace;font-size:0.75rem;color:var(--danger);margin-top:0.8rem;letter-spacing:0.1em;min-height:1.2rem}
+.gate-hint{font-family:'Share Tech Mono',monospace;font-size:0.68rem;color:var(--muted);margin-top:1.5rem;letter-spacing:0.1em;line-height:1.6}
+#main{display:none;padding:2rem 1rem 4rem}
+header{text-align:center;margin-bottom:3rem}
+.event-label{font-family:'Share Tech Mono',monospace;font-size:0.75rem;letter-spacing:0.3em;color:var(--muted);text-transform:uppercase;margin-bottom:0.5rem}
+h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(2.5rem,8vw,5rem);color:var(--purple);letter-spacing:0.05em;line-height:1;text-shadow:0 0 40px rgba(176,102,255,0.4)}
+.subtitle{font-family:'Share Tech Mono',monospace;font-size:0.85rem;color:var(--muted);margin-top:0.5rem;letter-spacing:0.15em}
+.puzzles{max-width:900px;margin:0 auto;display:flex;flex-direction:column;gap:2rem}
+.puzzle-card{background:var(--panel);border:1px solid var(--border);border-radius:12px;overflow:hidden;transition:border-color 0.3s,box-shadow 0.3s}
+.puzzle-card.solved{border-color:var(--purple-dim);box-shadow:0 0 24px var(--purple-glow)}
+.puzzle-card.wrong{border-color:var(--danger)}
+.card-header{display:flex;align-items:center;justify-content:space-between;padding:0.9rem 1.4rem;border-bottom:1px solid var(--border);background:rgba(176,102,255,0.04);flex-wrap:wrap;gap:0.5rem}
+.puzzle-num{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:var(--purple);letter-spacing:0.1em}
+.puzzle-tag{font-family:'Share Tech Mono',monospace;font-size:0.65rem;letter-spacing:0.12em;padding:0.2rem 0.7rem;border-radius:20px;text-transform:uppercase;background:rgba(176,102,255,0.1);color:var(--purple);border:1px solid var(--purple-dim)}
+.card-body{padding:1.4rem 1.6rem;display:flex;gap:1.5rem;flex-wrap:wrap}
+.board-wrap{flex-shrink:0}
+.board-label{font-family:'Share Tech Mono',monospace;font-size:0.65rem;color:var(--muted);letter-spacing:0.15em;text-transform:uppercase;margin-bottom:0.5rem}
+.board-outer{display:flex}
+.rank-labels{display:flex;flex-direction:column;justify-content:space-around;padding-right:4px}
+.rank-label{font-family:'Share Tech Mono',monospace;font-size:0.6rem;color:var(--muted);line-height:1;text-align:right}
+.board-col{display:flex;flex-direction:column}
+.chessboard{display:grid;grid-template-columns:repeat(8,40px);grid-template-rows:repeat(8,40px);border:2px solid var(--purple-dim);border-radius:4px;overflow:hidden}
+.file-labels{display:flex;justify-content:space-around;padding-top:4px;width:min(300px,calc(100vw - 5rem))}
+.file-label{font-family:'Share Tech Mono',monospace;font-size:0.6rem;color:var(--muted);text-align:center}
+.sq{width:40px;height:40px;display:flex;align-items:center;justify-content:center;font-size:1.5rem;user-select:none}
+.sq.light{background:#2a1e30}
+.sq.dark{background:#1a0f22}
+.puzzle-info{flex:1;min-width:220px;display:flex;flex-direction:column;gap:1rem}
+.section-label{font-family:'Share Tech Mono',monospace;font-size:0.65rem;color:var(--muted);letter-spacing:0.2em;text-transform:uppercase;margin-bottom:0.3rem}
+.scenario-text{font-size:0.87rem;color:var(--text);line-height:1.6}
+.move-format{background:rgba(176,102,255,0.05);border:1px solid var(--border);border-radius:6px;padding:0.6rem 0.9rem;font-family:'Share Tech Mono',monospace;font-size:0.72rem;color:var(--muted);line-height:1.8}
+.move-format span{color:var(--purple)}
+.answer-row{display:flex;gap:0.6rem;align-items:center;flex-wrap:wrap}
+.answer-input{flex:1;min-width:160px;background:rgba(176,102,255,0.05);border:1px solid var(--purple-dim);border-radius:6px;color:var(--purple);font-family:'Share Tech Mono',monospace;font-size:0.83rem;padding:0.6rem 0.9rem;outline:none;letter-spacing:0.04em;transition:border-color 0.2s}
+.answer-input:focus{border-color:var(--purple);box-shadow:0 0 12px var(--purple-glow)}
+.answer-input:disabled{opacity:0.4;cursor:not-allowed}
+.check-btn{background:var(--purple);color:var(--bg);border:none;border-radius:6px;font-family:'Share Tech Mono',monospace;font-size:0.78rem;font-weight:bold;letter-spacing:0.1em;padding:0.6rem 1.1rem;cursor:pointer;text-transform:uppercase;transition:opacity 0.2s;white-space:nowrap}
+.check-btn:hover{opacity:0.85}
+.check-btn:disabled{opacity:0.3;cursor:not-allowed}
+.hint-btn{background:transparent;color:var(--muted);border:1px solid var(--border);border-radius:6px;font-family:'Share Tech Mono',monospace;font-size:0.78rem;letter-spacing:0.1em;padding:0.6rem 0.9rem;cursor:pointer;text-transform:uppercase;white-space:nowrap}
+.hint-btn:hover{opacity:0.7}
+.hint-btn:disabled{opacity:0.2;cursor:not-allowed}
+.feedback{font-family:'Share Tech Mono',monospace;font-size:0.75rem;letter-spacing:0.08em;min-height:1.2rem;margin-top:0.4rem}
+.feedback.correct{color:var(--green)}
+.feedback.incorrect{color:var(--danger)}
+.feedback.hint-fb{color:var(--gold)}
+.complete-banner{display:none;text-align:center;padding:0.75rem;background:rgba(176,102,255,0.08);border-top:1px solid var(--purple-dim);font-family:'Share Tech Mono',monospace;font-size:0.78rem;color:var(--purple);letter-spacing:0.15em}
+.scoreboard{max-width:900px;margin:2rem auto 0;background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:1.2rem 1.5rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem}
+.score-block{text-align:center}
+.score-label{font-family:'Share Tech Mono',monospace;font-size:0.72rem;color:var(--muted);letter-spacing:0.2em}
+.score-val{font-family:'Bebas Neue',sans-serif;font-size:2.4rem;color:var(--purple);line-height:1}
+#unlockSection{display:none;max-width:900px;margin:2rem auto 0;background:var(--panel);border:2px solid var(--purple-dim);border-radius:12px;padding:2.5rem;box-shadow:0 0 50px var(--purple-glow);animation:fadeIn 0.8s ease;text-align:center}
+@keyframes fadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.unlock-title{font-family:'Bebas Neue',sans-serif;font-size:2rem;color:var(--purple);letter-spacing:0.1em;margin-bottom:0.5rem}
+.unlock-sub{font-family:'Share Tech Mono',monospace;font-size:0.75rem;color:var(--muted);letter-spacing:0.15em;margin-bottom:2rem}
+.code-display{background:rgba(176,102,255,0.08);border:1px solid var(--purple-dim);border-radius:10px;padding:1.5rem 2.5rem;margin-bottom:2rem;display:inline-block}
+.code-label{font-family:'Share Tech Mono',monospace;font-size:0.7rem;color:var(--muted);letter-spacing:0.2em;text-transform:uppercase;margin-bottom:0.5rem}
+.code-word{font-family:'Bebas Neue',sans-serif;font-size:3rem;color:var(--purple);letter-spacing:0.3em;text-shadow:0 0 30px rgba(176,102,255,0.6)}
+.code-note{font-family:'Share Tech Mono',monospace;font-size:0.7rem;color:var(--muted);margin-top:0.5rem}
+.proceed-btn{display:inline-block;background:var(--purple);color:var(--bg);border:none;border-radius:8px;font-family:'Bebas Neue',sans-serif;font-size:1.3rem;letter-spacing:0.2em;padding:1rem 2.5rem;cursor:pointer;text-decoration:none;transition:opacity 0.2s,transform 0.15s;box-shadow:0 0 20px var(--purple-glow)}
+.proceed-btn:hover{opacity:0.85;transform:scale(1.02)}
+</style>
+</head>
+<body>
+
+<div id="gate">
+  <div class="gate-box">
+    <div class="gate-icon">♟</div>
+    <div class="gate-title">ROUND 2</div>
+    <div class="gate-sub">// ACCESS RESTRICTED — ENTER PASSWORD //</div>
+    <input type="password" class="gate-input" id="gateInput" placeholder="••••••••" maxlength="20"
+           onkeydown="if(event.key==='Enter')tryUnlock()" autocomplete="off"/>
+    <button class="gate-btn" onclick="tryUnlock()">UNLOCK</button>
+    <div class="gate-error" id="gateError"></div>
+    <div class="gate-hint">Password acquired from Round 1<br>Enter it above to proceed</div>
+  </div>
+</div>
+
+<div id="main">
+  <header>
+    <div class="event-label">E Treasure Hunt · Round 2</div>
+    <h1>Chess Puzzles</h1>
+    <div class="subtitle">// White to move · Mate in 1 · Find the checkmating move //</div>
+  </header>
+  <div class="puzzles" id="puzzleContainer"></div>
+  <div class="scoreboard">
+    <div class="score-block"><div class="score-label">Solved</div><div class="score-val" id="scoreDisplay">0 / 5</div></div>
+    <div class="score-block"><div class="score-label">Hints Used</div><div class="score-val" id="hintsDisplay">0</div></div>
+    <div class="score-block"><div class="score-label">Status</div><div class="score-val" id="statusDisplay" style="font-size:1.1rem;color:var(--muted)">IN PROGRESS</div></div>
+  </div>
+  <div id="unlockSection">
+    <div class="unlock-title">♛ ROUND 2 COMPLETE</div>
+    <div class="unlock-sub">// All five puzzles solved — your code for Round 3 //</div>
+    <div style="display:flex;justify-content:center">
+      <div class="code-display">
+        <div class="code-label">Round 3 Password</div>
+        <div class="code-word">CHECKMATE</div>
+        <div class="code-note">Enter this on the Round 3 page to proceed</div>
+      </div>
+    </div>
+    <br>
+    <a class="proceed-btn" href="round3.html">ENTER ROUND 3 →</a>
+  </div>
+</div>
+
+<script>
+const PASSWORD='LEOPARD';
+function tryUnlock(){
+  const v=document.getElementById('gateInput').value.trim().toUpperCase();
+  if(v===PASSWORD){
+    document.getElementById('gate').style.display='none';
+    document.getElementById('main').style.display='block';
+  } else {
+    document.getElementById('gateError').textContent='✗ Incorrect password. Check your Round 1 answers.';
+    document.getElementById('gateInput').value='';
+  }
+}
+
+// Piece unicode map
+const W={K:'♔',Q:'♕',R:'♖',B:'♗',N:'♘',P:'♙'};
+const B={k:'♚',q:'♛',r:'♜',b:'♝',n:'♞',p:'♟'};
+const PIECES=Object.assign({},W,B);
+
+// Parse FEN piece placement into 8x8 array
+function parseFEN(fen){
+  const rows=fen.split(' ')[0].split('/');
+  return rows.map(row=>{
+    const cells=[];
+    for(const ch of row){
+      if(/\d/.test(ch)) for(let i=0;i<parseInt(ch);i++) cells.push('.');
+      else cells.push(ch);
+    }
+    return cells;
+  });
+}
+
+// Verified FEN positions for each puzzle
+const DATA=[
+  {
+    title:'The Back Rank',
+    desc:"Black's king is trapped on the back rank, hemmed in by its own pawns. White's queen eyes the perfect square. One move ends it all.",
+    fen:'6k1/5ppp/8/8/8/8/6PP/3Q2K1 w - - 0 1',
+    solution:'Qd8#',
+    hint:'The queen slides to the back rank — the pawns do the rest.'
+  },
+  {
+    title:'The Ladder',
+    desc:'Two rooks work in harmony. The black king has nowhere left to run. Find the single move that delivers checkmate.',
+    fen:'5r1k/6pR/8/8/8/8/8/1R4K1 w - - 0 1',
+    solution:'Rb8#',
+    hint:'The second rook steps up to complete the ladder mate.'
+  },
+  {
+    title:'The Queen Strike',
+    desc:"White's queen has the black king in its sights. The king is hemmed in by its own pieces. Find the one move that ends the game.",
+    fen:'5r1k/6pp/8/8/8/3Q4/6PP/6K1 w - - 0 1',
+    solution:'Qxh7#',
+    hint:'The queen captures on h7 — checkmate.'
+  },
+  {
+    title:'The Rook Finish',
+    desc:'The black king is cornered with no escape. A rook delivers the final blow. Find the mating move.',
+    fen:'7k/6pR/8/8/8/8/8/6RK1 w - - 0 1',
+    solution:'Rg8#',
+    hint:'The rook on g1 swings to the back rank — checkmate.'
+  },
+  {
+    title:'The Smothered Knight',
+    desc:"The black king is completely suffocated by its own pieces. A single knight move delivers the most elegant checkmate in chess.",
+    fen:'6rk/6rp/8/8/5N2/8/8/6K1 w - - 0 1',
+    solution:'Ng6#',
+    hint:'The knight leaps to g6 — the king is smothered by its own rooks and pawn.'
+  }
+];
+
+let solved=0,hintsUsed=0;
+
+function updateScore(){
+  document.getElementById('scoreDisplay').textContent=solved+' / 5';
+  if(solved===5){
+    document.getElementById('statusDisplay').textContent='COMPLETE';
+    document.getElementById('statusDisplay').style.color='var(--purple)';
+    const u=document.getElementById('unlockSection');
+    u.style.display='block';
+    setTimeout(()=>u.scrollIntoView({behavior:'smooth'}),100);
+  }
+}
+
+function renderBoard(fen, id){
+  const grid=parseFEN(fen);
+  const el=document.getElementById(id);
+  el.innerHTML='';
+  for(let r=0;r<8;r++){
+    for(let c=0;c<8;c++){
+      const sq=document.createElement('div');
+      sq.className='sq '+((r+c)%2===0?'light':'dark');
+      const ch=grid[r][c];
+      if(ch&&ch!=='.'){sq.textContent=PIECES[ch]||'';sq.style.color='KQRBNP'.indexOf(ch)>=0?'#ffffff':'#1a0030';sq.style.textShadow='KQRBNP'.indexOf(ch)>=0?'0 0 4px #000,0 1px 2px #000':'0 0 4px rgba(255,255,255,0.6)';}
+      el.appendChild(sq);
+    }
+  }
+  // Add rank labels next to board (done via wrapper)
+}
+
+function buildBoardHTML(i){
+  const files=['a','b','c','d','e','f','g','h'];
+  let fileHtml=files.map(f=>'<div class="file-label">'+f+'</div>').join('');
+  let rankHtml='';
+  for(let r=8;r>=1;r--) rankHtml+='<div class="rank-label">'+r+'</div>';
+  return '<div class="board-outer">'+
+    '<div class="rank-labels">'+rankHtml+'</div>'+
+    '<div class="board-col">'+
+      '<div class="chessboard" id="board-'+i+'"></div>'+
+      '<div class="file-labels">'+fileHtml+'</div>'+
+    '</div>'+
+  '</div>';
+}
+
+function norm(s){return s.trim().toUpperCase().replace(/\s+/g,' ');}
+
+function checkAnswer(i){
+  const inp=document.getElementById('ans-'+i);
+  const fb=document.getElementById('fb-'+i);
+  const card=document.getElementById('card-'+i);
+  if(norm(inp.value)===norm(DATA[i].solution)){
+    fb.textContent='✓ Correct! Winning line confirmed.';
+    fb.className='feedback correct';
+    card.classList.add('solved');
+    inp.disabled=true;
+    card.querySelectorAll('.check-btn,.hint-btn').forEach(b=>b.disabled=true);
+    document.getElementById('banner-'+i).style.display='block';
+    solved++;updateScore();
+  } else {
+    fb.textContent='✗ Not quite — check your move order and notation.';
+    fb.className='feedback incorrect';
+    card.classList.add('wrong');
+    setTimeout(()=>card.classList.remove('wrong'),800);
+  }
+}
+
+function showHint(i){
+  hintsUsed++;
+  document.getElementById('hintsDisplay').textContent=hintsUsed;
+  const fb=document.getElementById('fb-'+i);
+  fb.textContent='💡 Hint (-1 pt): '+DATA[i].hint;
+  fb.className='feedback hint-fb';
+  document.getElementById('hintbtn-'+i).disabled=true;
+}
+
+function buildCard(i){
+  const d=DATA[i];
+  const card=document.createElement('div');
+  card.className='puzzle-card';
+  card.id='card-'+i;
+  card.innerHTML=
+    '<div class="card-header">'+
+      '<span class="puzzle-num">PUZZLE '+(i+1)+' — '+d.title+'</span>'+
+      '<span class="puzzle-tag">MATE IN 1 · WHITE TO MOVE</span>'+
+    '</div>'+
+    '<div class="card-body">'+
+      '<div class="board-wrap">'+
+        '<div class="board-label">Position (♔♕♖♗♘♙ = White)</div>'+
+        buildBoardHTML(i)+
+      '</div>'+
+      '<div class="puzzle-info">'+
+        '<div><div class="section-label">Scenario</div><p class="scenario-text">'+d.desc+'</p></div>'+
+        '<div class="move-format">Enter the single move that delivers checkmate<br>Format: <span>piece + square + #</span><br>Examples: <span>Rd8#</span> &nbsp; <span>Qxh7#</span> &nbsp; <span>Ng6#</span></div>'+
+        '<div>'+
+          '<div class="section-label">Your Answer</div>'+
+          '<div class="answer-row">'+
+            '<input type="text" class="answer-input" id="ans-'+i+'" placeholder="e.g. Rd8#"/>'+
+            '<button class="check-btn" onclick="checkAnswer('+i+')">CHECK</button>'+
+            '<button class="hint-btn" id="hintbtn-'+i+'" onclick="showHint('+i+')">HINT</button>'+
+          '</div>'+
+          '<div class="feedback" id="fb-'+i+'"></div>'+
+        '</div>'+
+      '</div>'+
+    '</div>'+
+    '<div class="complete-banner" id="banner-'+i+'">♛ CHECKMATE FOUND — PUZZLE SOLVED</div>';
+  card.querySelector('#ans-'+i).addEventListener('keydown',function(e){if(e.key==='Enter')checkAnswer(i);});
+  return card;
+}
+
+const container=document.getElementById('puzzleContainer');
+for(let i=0;i<5;i++){
+  const card=buildCard(i);
+  container.appendChild(card);
+  renderBoard(DATA[i].fen,'board-'+i);
+}
+updateScore();
+</script>
+</body>
+</html>
